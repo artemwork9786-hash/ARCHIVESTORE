@@ -25,7 +25,8 @@ export default function ProductCard({ product, cartItem, index, onAddToCart, onC
           className="absolute inset-0 w-full h-full object-cover blur-xl scale-110" aria-hidden="true" />
         <img src={imgUrl(product.preview)} alt={product.name || ''}
           className="relative w-full h-full object-contain group-hover:scale-105 transition-transform duration-500"
-          onLoad={() => setLoaded(true)} />
+          onLoad={() => setLoaded(true)}
+          onError={() => setLoaded(true)} />
       </div>
       <div className="pt-3 sm:pt-4">
         <p className="font-mono text-[10px] sm:text-xs text-gray-400 dark:text-neutral-500 uppercase tracking-wider">
