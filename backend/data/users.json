@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "email": "admin@archive.store",
+    "password": "$2b$10$2L9UobzXb.w6GuBMp57XnOibL5vk3mbaD1JpILqiMth26UQQ7ZJbW",
+    "fullname": "Администратор",
+    "phone": "",
+    "telegram": "@admin",
+    "role": "admin",
+    "createdAt": "2026-07-04T17:56:05.800Z"
+  },
+  {
+    "id": 1783187987281,
+    "email": "qwertty@mail.ru",
+    "password": "$2b$10$Jgb8B//YQj6UvoVpwGVIV.nE8wXaZ2wGZMiAAPcYpZ.mc4p.tX9p2",
+    "fullname": "ваюшка",
+    "phone": "123",
+    "telegram": "@why",
+    "role": "user",
+    "createdAt": "2026-07-04T17:59:47.281Z"
+  },
+  {
+    "id": 1783188457455,
+    "email": "qwe@mail.ru",
+    "password": "$2b$10$wb0khxiohlDbMl7oy5AXAOOCN6qlyQu6bkHUMGchZYEgWj2BjBN9m",
+    "fullname": "qwe",
+    "phone": "123",
+    "telegram": "@qwe",
+    "role": "user",
+    "createdAt": "2026-07-04T18:07:37.455Z"
+  }
+]

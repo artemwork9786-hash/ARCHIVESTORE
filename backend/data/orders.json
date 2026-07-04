@@ -1,0 +1,20 @@
+[
+  {
+    "id": 1783198508740,
+    "userId": 1,
+    "email": "admin@archive.store",
+    "telegram": "@admin",
+    "fullname": "Администратор",
+    "phone": "999999999999999",
+    "items": [
+      {
+        "name": "CUPSIZE футболка",
+        "price": 3000,
+        "quantity": 1
+      }
+    ],
+    "total": 3000,
+    "date": "04.07.2026, 23:55:08",
+    "createdAt": "2026-07-04T20:55:08.766Z"
+  }
+]

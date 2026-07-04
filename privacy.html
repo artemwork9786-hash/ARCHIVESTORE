@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArchiveStore — Политика</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        if (localStorage.getItem('theme') === 'light') {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+    </style>
+</head>
+<body class="bg-white dark:bg-black text-black dark:text-white min-h-screen transition-colors">
+
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+        <a href="index.html" class="inline-flex items-center gap-2 text-gray-400 dark:text-neutral-500 hover:text-black dark:hover:text-white transition-colors mb-8 font-mono text-xs uppercase tracking-wider">
+            <span class="text-lg">←</span> Назад в магазин
+        </a>
+
+        <h1 class="text-2xl sm:text-3xl font-bold mb-2 uppercase tracking-tight">Политика конфиденциальности</h1>
+        <p class="font-mono text-[10px] sm:text-xs text-gray-400 dark:text-neutral-500 mb-8 uppercase tracking-wider">Последнее обновление: 03 июля 2026</p>
+
+        <div class="space-y-8 text-gray-600 dark:text-neutral-300 leading-relaxed text-sm sm:text-base">
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">1. Общие положения</h2>
+                <p>Настоящая Политика конфиденциальности определяет порядок сбора, хранения, обработки и защиты персональных данных пользователей интернет-магазина ArchiveStore Store (далее — «Магазин»). Используя сервисы Магазина, вы подтверждаете своё согласие с условиями данной Политики.</p>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">2. Какие данные мы собираем</h2>
+                <p>Мы можем собирать следующие персональные данные, которые вы предоставляете добровольно при оформлении заказа:</p>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-gray-500 dark:text-neutral-400">
+                    <li>Email</li>
+                    <li>Ссылка на Telegram</li>
+                    <li>ФИО</li>
+                    <li>Номер телефона</li>
+                    <li>Сведения о заказе (состав, сумма)</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">3. Цели обработки данных</h2>
+                <p>Персональные данные обрабатываются исключительно в следующих целях:</p>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-gray-500 dark:text-neutral-400">
+                    <li>Обработка и исполнение ваших заказов</li>
+                    <li>Связь с вами по вопросам доставки и обслуживания</li>
+                    <li>Улучшение качества сервиса</li>
+                    <li>Соблюдение требований действующего законодательства</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">4. Защита данных</h2>
+                <p>Мы принимаем все необходимые организационные и технические меры для защиты ваших персональных данных от неправомерного доступа, уничтожения, модификации или распространения. Доступ к данным имеют только уполномоченные сотрудники.</p>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">5. Передача данных третьим лицам</h2>
+                <p>Мы не передаём ваши персональные данные третьим лицам, за исключением случаев, предусмотренных действующим законодательством Российской Федерации, а также случаев, когда передача данных необходима для исполнения вашего заказа (например, курьерской службе).</p>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">6. Хранение данных</h2>
+                <p>Персональные данные хранятся на защищённых серверах в течение срока, необходимого для целей их обработки, или в течение срока, установленного действующим законодательством.</p>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">7. Ваши права</h2>
+                <p>Вы имеете право:</p>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-gray-500 dark:text-neutral-400">
+                    <li>Получать информацию о обработке ваших персональных данных</li>
+                    <li>Требовать уточнения, блокирования или удаления персональных данных</li>
+                    <li>Отозвать согласие на обработку персональных данных</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-lg font-bold mb-3 uppercase tracking-wide">8. Контактная информация</h2>
+                <p>По вопросам, связанным с обработкой персональных данных, вы можете обращаться по адресу электронной почты: <span class="font-mono text-black dark:text-white">privacy@archivestore.store</span></p>
+            </section>
+
+            <section class="border-t border-gray-200 dark:border-white/10 pt-6">
+                <p class="font-mono text-[10px] text-gray-400 dark:text-neutral-600 uppercase tracking-wider">Данная Политика является тестовой заглушкой. Замените на реальный документ перед запуском.</p>
+            </section>
+
+        </div>
+    </div>
+
+</body>
+</html>

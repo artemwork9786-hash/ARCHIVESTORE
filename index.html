@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🥷 ArchiveStore</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
+              sans: ['"Inter"', 'system-ui', 'sans-serif'],
+            },
+          },
+        },
+      };
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <script>
+      if (localStorage.getItem('theme') === 'light') {
+        document.documentElement.classList.remove('dark');
+      } else {
+        document.documentElement.classList.add('dark');
+      }
+    </script>
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+      }
+      .font-mono {
+        font-family: 'JetBrains Mono', monospace;
+      }
+    </style>
+  </head>
+  <body class="bg-white dark:bg-black text-black dark:text-white min-h-screen transition-colors">
+    <!-- Header -->
+    <header
+      class="sticky top-0 z-40 bg-white dark:bg-black border-b border-gray-200 dark:border-white/10 transition-colors"
+    >
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+        <h1 class="font-mono text-lg sm:text-xl font-bold tracking-tight uppercase">
+          ArchiveStore
+        </h1>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <button
+            id="theme-toggle"
+            class="w-10 h-10 flex items-center justify-center border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors rounded-none text-sm"
+          >
+            <span id="theme-icon">☀️</span>
+          </button>
+          <button
+            id="open-admin"
+            class="hidden px-4 py-2.5 border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-mono text-xs uppercase tracking-wider"
+          >
+            Админка
+          </button>
+          <button
+            id="open-auth"
+            class="sm:block px-4 py-2.5 border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-mono text-xs uppercase tracking-wider"
+          >
+            Войти
+          </button>
+          <button
+            id="open-history"
+            class="sm:block px-4 py-2.5 border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-mono text-xs uppercase tracking-wider"
+          >
+            Заказы
+          </button>
+          <button
+            id="open-cart"
+            class="px-4 py-2.5 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors font-mono text-xs uppercase tracking-wider"
+          >
+            Корзина (<span id="cart-count">0</span>)
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Product Grid -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
+      <p
+        class="font-mono text-[10px] sm:text-xs uppercase tracking-[0.3em] text-gray-400 dark:text-neutral-500 mb-6 sm:mb-8"
+      >
+        Каталог / New arrivals
+      </p>
+      <div id="catalog-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+        <!-- Cards rendered by JS -->
+      </div>
+    </main>
+
+    <!-- Cart Modal -->
+    <div
+      id="cart-modal"
+      class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+    >
+      <div id="cart-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div
+        class="relative bg-white dark:bg-black w-full sm:max-w-lg sm:mx-4 max-h-[90vh] flex flex-col transition-colors border-t sm:border border-gray-200 dark:border-white/10"
+      >
+        <div
+          class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/10"
+        >
+          <h2 class="font-mono text-sm font-bold uppercase tracking-wider">Корзина</h2>
+          <button
+            id="close-cart"
+            class="w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-lg"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+          <!-- Items will be inserted here -->
+        </div>
+        <div
+          class="px-5 py-4 border-t border-gray-200 dark:border-white/10 flex items-center justify-between"
+        >
+          <span
+            class="font-mono text-xs uppercase tracking-wider text-gray-500 dark:text-neutral-400"
+            >Итого</span
+          >
+          <span id="cart-total" class="font-mono text-lg font-bold">0 р.</span>
+        </div>
+        <!-- Checkout Form -->
+        <form
+          id="checkout-form"
+          class="px-5 pb-5 space-y-3 border-t border-gray-200 dark:border-white/10 pt-4"
+        >
+          <div>
+            <label
+              class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+              >Email</label
+            >
+            <input
+              type="email"
+              name="email"
+              placeholder="mail@example.com"
+              class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+            />
+            <p class="font-mono text-[9px] text-gray-400 dark:text-neutral-600 mt-1">
+              Указывайте регистрационный e-mail адрес — это важно
+            </p>
+          </div>
+          <div>
+            <label
+              class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+              >Telegram</label
+            >
+            <input
+              type="text"
+              name="telegram"
+              placeholder="@username"
+              class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+            />
+            <p class="font-mono text-[9px] text-gray-400 dark:text-neutral-600 mt-1">
+              Как с вами связаться
+            </p>
+          </div>
+          <div>
+            <label
+              class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+              >ФИО</label
+            >
+            <input
+              type="text"
+              name="fullname"
+              placeholder="Иванов Иван Иванович"
+              class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+            />
+          </div>
+          <div>
+            <label
+              class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+              >Телефон</label
+            >
+            <input
+              type="tel"
+              name="phone"
+              placeholder="+7 (999) 123-45-67"
+              class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+            />
+          </div>
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              id="privacy-checkbox"
+              class="appearance-none w-5 h-5 rounded-none bg-transparent border border-neutral-600 dark:border-neutral-400 checked:border-black dark:checked:border-white checked:bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22black%22%3E%3Cpath%20d%3D%22M9%2016.17L4.83%2012l-1.42%201.41L9%2019%2021%207l-1.41-1.41z%22%2F%3E%3C%2Fsvg%3E')] dark:checked:bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22white%22%3E%3Cpath%20d%3D%22M9%2016.17L4.83%2012l-1.42%201.41L9%2019%2021%207l-1.41-1.41z%22%2F%3E%3C%2Fsvg%3E')] checked:bg-transparent dark:checked:bg-transparent checked:bg-no-repeat checked:bg-center checked:bg-[length:16px_16px] cursor-pointer flex-shrink-0"
+            />
+            <span
+              class="font-mono text-[10px] text-gray-400 dark:text-neutral-500 leading-tight uppercase tracking-wider"
+              >Даю согласие на
+              <a
+                href="privacy.html"
+                class="underline hover:text-black dark:hover:text-white transition-colors"
+                >обработку моих персональных данных</a
+              ></span
+            >
+          </label>
+          <label class="flex items-center gap-3 cursor-pointer group">
+            <input
+              type="checkbox"
+              id="terms-checkbox"
+              class="appearance-none w-5 h-5 rounded-none bg-transparent border border-neutral-600 dark:border-neutral-400 checked:border-black dark:checked:border-white checked:bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22black%22%3E%3Cpath%20d%3D%22M9%2016.17L4.83%2012l-1.42%201.41L9%2019%2021%207l-1.41-1.41z%22%2F%3E%3C%2Fsvg%3E')] dark:checked:bg-[url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22white%22%3E%3Cpath%20d%3D%22M9%2016.17L4.83%2012l-1.42%201.41L9%2019%2021%207l-1.41-1.41z%22%2F%3E%3C%2Fsvg%3E')] checked:bg-transparent dark:checked:bg-transparent checked:bg-no-repeat checked:bg-center checked:bg-[length:16px_16px] cursor-pointer flex-shrink-0"
+            />
+            <span
+              class="font-mono text-[10px] text-gray-400 dark:text-neutral-500 leading-tight uppercase tracking-wider"
+              >Принимаю условия
+              <a
+                href="privacy.html"
+                class="underline hover:text-black dark:hover:text-white transition-colors"
+                >Пользовательского соглашения и Публичной оферты</a
+              ></span
+            >
+          </label>
+          <button
+            type="submit"
+            class="w-full py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors font-mono text-xs uppercase tracking-wider rounded-none font-bold"
+          >
+            Оформить заказ
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order History Modal -->
+    <div
+      id="history-modal"
+      class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+    >
+      <div id="history-backdrop" class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div
+        class="relative bg-white dark:bg-black w-full sm:max-w-lg sm:mx-4 max-h-[90vh] flex flex-col transition-colors border-t sm:border border-gray-200 dark:border-white/10"
+      >
+        <div
+          class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/10"
+        >
+          <h2 class="font-mono text-sm font-bold uppercase tracking-wider">Мои заказы</h2>
+          <button
+            id="close-history"
+            class="w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-lg"
+          >
+            &times;
+          </button>
+        </div>
+        <div id="history-items" class="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+          <!-- Orders will be rendered here -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Product Page Modal -->
+    <div
+      id="product-page-modal"
+      class="hidden fixed inset-0 z-50 bg-white dark:bg-black overflow-y-auto transition-colors"
+    >
+      <!-- Content rendered by JS -->
+    </div>
+
+    <!-- Lightbox -->
+    <div id="lightbox" class="hidden fixed inset-0 z-[70] bg-black/95">
+      <button
+        id="lightbox-close"
+        class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors text-2xl font-light"
+      >
+        &times;
+      </button>
+      <button
+        id="lightbox-prev"
+        class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors text-3xl font-light"
+      >
+        &lsaquo;
+      </button>
+      <button
+        id="lightbox-next"
+        class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center text-white/60 hover:text-white transition-colors text-3xl font-light"
+      >
+        &rsaquo;
+      </button>
+      <div
+        id="lightbox-viewport"
+        class="absolute inset-0 flex items-center justify-center overflow-hidden cursor-grab select-none touch-none"
+      >
+        <img
+          id="lightbox-image"
+          class="max-w-none max-h-none origin-center pointer-events-none"
+          draggable="false"
+        />
+      </div>
+      <div
+        id="lightbox-counter"
+        class="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 font-mono text-xs text-white/50 uppercase tracking-widest"
+      >
+        1 / 1
+      </div>
+    </div>
+
+    <!-- Auth Modal -->
+    <div
+      id="auth-modal"
+      class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+    >
+      <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div
+        class="relative bg-white dark:bg-black w-full sm:max-w-sm sm:mx-4 border-t sm:border border-gray-200 dark:border-white/10 p-6"
+      >
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="font-mono text-sm font-bold uppercase tracking-wider">Авторизация</h2>
+          <button
+            id="close-auth"
+            class="w-8 h-8 flex items-center justify-center border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-lg"
+          >
+            &times;
+          </button>
+        </div>
+        <form id="auth-form" class="space-y-3">
+          <input
+            type="text"
+            name="login"
+            placeholder="Логин"
+            required
+            class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+          />
+          <input
+            type="password"
+            name="password"
+            placeholder="Пароль"
+            required
+            class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+          />
+          <button
+            type="submit"
+            class="w-full py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors font-mono text-xs uppercase tracking-wider rounded-none font-bold"
+          >
+            Войти
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div
+      id="admin-panel-modal"
+      class="hidden fixed inset-0 z-50 flex items-end sm:items-center justify-center"
+    >
+      <div class="absolute inset-0 bg-black/70 backdrop-blur-sm"></div>
+      <div
+        class="relative bg-white dark:bg-black w-full sm:max-w-lg sm:mx-4 max-h-[90vh] flex flex-col border-t sm:border border-gray-200 dark:border-white/10"
+      >
+        <!-- Header -->
+        <div
+          class="flex items-center justify-between px-5 py-4 border-b border-gray-200 dark:border-white/10"
+        >
+          <h2
+            id="admin-header-title"
+            class="font-mono text-base font-bold uppercase tracking-wider"
+          >
+            Админ-панель
+          </h2>
+          <div id="admin-header-nav" class="flex items-center gap-2 shrink-0">
+            <button
+              id="admin-tab-add"
+              class="admin-tab h-9 min-w-[36px] px-2.5 flex items-center justify-center border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-mono text-base font-bold"
+              title="Добавить товар"
+            >
+              +
+            </button>
+            <button
+              id="admin-tab-list"
+              class="admin-tab h-9 min-w-[36px] px-2.5 flex items-center justify-center border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors font-mono text-base"
+              title="Список товаров"
+            >
+              ≡
+            </button>
+            <div class="w-px h-5 bg-gray-200 dark:bg-white/10 mx-0.5"></div>
+            <button
+              id="close-admin"
+              class="h-9 w-9 flex items-center justify-center border border-gray-300 dark:border-white/20 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors text-lg"
+            >
+              &times;
+            </button>
+          </div>
+          <button
+            id="admin-back"
+            class="hidden shrink-0 items-center gap-1.5 font-mono text-xs uppercase tracking-wider text-gray-400 dark:text-neutral-500 hover:text-black dark:hover:text-white transition-colors h-9 px-3 border border-gray-300 dark:border-white/20"
+          >
+            <span class="text-lg leading-none -mt-px" style="height: 20.04px">←</span> Назад
+          </button>
+        </div>
+
+        <!-- Screen 1: Add product -->
+        <div id="admin-screen-add" class="flex-1 min-h-[500px] overflow-y-auto">
+          <form id="admin-form" class="px-5 py-4 space-y-3">
+            <div>
+              <label
+                class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                >Название товара</label
+              >
+              <input
+                type="text"
+                name="name"
+                required
+                placeholder='"Archive" Hoodie'
+                class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+              />
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                  >Цена (руб.)</label
+                >
+                <input
+                  type="number"
+                  name="price"
+                  required
+                  placeholder="4000"
+                  class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                  >Артикул</label
+                >
+                <input
+                  type="text"
+                  name="article"
+                  id="admin-article"
+                  readonly
+                  placeholder="ARC-004"
+                  class="w-full px-3 py-2.5 bg-gray-100 dark:bg-white/10 border border-gray-300 dark:border-white/10 rounded-none font-mono text-sm text-gray-500 dark:text-neutral-500 cursor-not-allowed"
+                />
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                  >Превью</label
+                >
+                <label
+                  class="flex items-center justify-center w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <span id="preview-file-label">Выбрать превью</span>
+                  <input type="file" id="preview-file" name="preview" accept="image/*" class="hidden" />
+                </label>
+              </div>
+              <div>
+                <label
+                  class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                  >Доп. картинки</label
+                >
+                <label
+                  class="flex items-center justify-center w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 hover:bg-gray-100 dark:hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  <span id="gallery-file-label">Выбрать доп. картинки</span>
+                  <input type="file" id="gallery-files" name="gallery" accept="image/*" multiple class="hidden" />
+                </label>
+              </div>
+            </div>
+            <div>
+              <label
+                class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                >Описание</label
+              >
+              <textarea
+                name="description"
+                rows="3"
+                placeholder="Описание товара..."
+                class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm resize-none"
+              ></textarea>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label
+                  class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                  >Состав</label
+                >
+                <input
+                  type="text"
+                  name="composition"
+                  placeholder="100% хлопок"
+                  class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+                />
+              </div>
+              <div>
+                <label
+                  class="font-mono text-[10px] uppercase tracking-wider text-gray-400 dark:text-neutral-500 mb-1 block"
+                  >Страна</label
+                >
+                <input
+                  type="text"
+                  name="country"
+                  placeholder="Турция"
+                  class="w-full px-3 py-2.5 bg-gray-50 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-none focus:outline-none focus:border-black dark:focus:border-white transition-colors placeholder-gray-300 dark:placeholder-neutral-600 font-mono text-sm"
+                />
+              </div>
+            </div>
+            <button
+              id="admin-submit-btn"
+              type="submit"
+              class="w-full py-3 bg-black dark:bg-white text-white dark:text-black hover:bg-neutral-800 dark:hover:bg-neutral-200 transition-colors font-mono text-xs uppercase tracking-wider rounded-none font-bold"
+            >
+              Добавить товар в каталог
+            </button>
+          </form>
+        </div>
+
+        <!-- Screen 2: Product list -->
+        <div id="admin-screen-list" class="hidden flex-1 min-h-[500px] overflow-y-auto">
+          <div id="admin-product-list" class="divide-y divide-gray-100 dark:divide-white/5">
+            <!-- Rendered by JS -->
+          </div>
+          <div id="admin-empty-list" class="hidden px-5 py-12 text-center">
+            <p
+              class="font-mono text-[11px] uppercase tracking-wider text-gray-400 dark:text-neutral-600"
+            >
+              Каталог пуст
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cookie Banner -->
+    <div
+      id="cookie-banner"
+      class="hidden fixed bottom-0 left-0 right-0 z-[90] bg-black dark:bg-neutral-950 border-t border-neutral-800 px-4 py-3"
+    >
+      <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p
+          class="font-mono text-[10px] sm:text-xs text-gray-400 dark:text-neutral-500 uppercase tracking-wider text-center sm:text-left"
+        >
+          На сайте осуществляется обработка персональных данных с использованием файлов cookie.
+        </p>
+        <button
+          id="accept-cookies"
+          class="px-5 py-2 bg-white dark:bg-neutral-800 text-black dark:text-white font-mono text-[10px] uppercase tracking-wider hover:bg-neutral-200 dark:hover:bg-neutral-700 transition-colors rounded-none whitespace-nowrap flex-shrink-0"
+        >
+          Принять
+        </button>
+      </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div
+      id="toast-container"
+      class="fixed bottom-5 right-5 z-[100] flex flex-col gap-2 pointer-events-none"
+    ></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
