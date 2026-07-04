@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { apiUrl } from '../config';
+import { apiUrl, imgUrl } from '../config';
 import LoadingOverlay from './LoadingOverlay';
 
 export default function AdminModal({ isOpen, onClose, products, setProducts, onNotify }) {
